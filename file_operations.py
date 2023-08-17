@@ -20,6 +20,8 @@ def get_note_from_file(title):
     return key_hint, note
 
 def get_titles():
+    if not os.path.exists(current_directory + "/notes"):
+        return []
     #get all the files in the notes directory
     files = os.listdir(current_directory + "/notes")
     #remove the .txt from the end of each file
