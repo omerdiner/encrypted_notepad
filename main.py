@@ -5,6 +5,15 @@ import encryption
 import file_operations
 
 
+def check_if_title_exists(title):
+    titles = file_operations.get_titles()
+    if title in titles:
+        messagebox.showerror(title="Error", message="A note with this title already exists!")
+        return True
+    else:
+        return False
+
+
 def check_entries():
     if len(title_entry.get()) == 0:
         messagebox.showerror(title="Error", message="Please enter a title for your note!")
@@ -13,7 +22,7 @@ def check_entries():
         messagebox.showerror(title="Error", message="Please enter a note!")
         return False
     else:
-        return True
+        return check_if_title_exists(title_entry.get()) == False
 
 
 def check_key(key):
@@ -83,7 +92,6 @@ note_entry.pack()
 note_entry.focus()
 
 # encryption
-###TO-DO CHECK IF THE FILE WITH THE SAME NAME ALREADY EXISTS
 encrypt_button = tk.Button(text="Encrypt", command=encrypt_note)
 encrypt_button.config(font=("Arial", 24, "bold"))
 encrypt_button.pack()
