@@ -4,6 +4,7 @@ from tkinter import messagebox, simpledialog
 import encryption
 import file_operations
 
+
 ##TO-DO  MAKE ENCRIPTION TURKISH ALPHABET FRIENDLY
 
 def check_if_title_exists(title):
@@ -43,9 +44,11 @@ def take_key_hint():
     key_hint = simpledialog.askstring(title="Hint", prompt="Hint:", initialvalue="Be creative!")
     return key_hint
 
+
 def if_note_exists():
     titles = file_operations.get_titles()
     return len(titles) > 0
+
 
 def encrypt_note():
     if not check_entries():
@@ -60,17 +63,18 @@ def encrypt_note():
     title = title_entry.get()
     file_operations.save_note_to_file(key_hint, encrypted_note, title)
     messagebox.showinfo(title="Note saved", message="Your note has been saved successfully!")
-############################################################################
-def open_decrypted_note(title,key):
 
+
+############################################################################
+def open_decrypted_note(title, key):
     show_decrypted_note_window = tk.Toplevel(main_window)
     show_decrypted_note_window.title(title)
     show_decrypted_note_window.geometry("700x700")
     show_decrypted_note_window.config(padx=20, pady=20)
     show_decrypted_note_window.config(bg="dark blue")
 
-    note=file_operations.get_note_from_file(title)[1]
-    decrypted_note=encryption.decrypt(note,key)
+    note = file_operations.get_note_from_file(title)[1]
+    decrypted_note = encryption.decrypt(note, key)
 
     decrypted_note_text = tk.Text(show_decrypted_note_window, height=20, width=50)
     decrypted_note_text.config(font=("Arial", 24, "bold"))
@@ -79,17 +83,16 @@ def open_decrypted_note(title,key):
 
 
 def open_decryption_window():
-
-    if if_note_exists()==False:
-       messagebox.showerror(title="Error", message="There are no notes to decrypt!")
-       return
+    if if_note_exists() == False:
+        messagebox.showerror(title="Error", message="There are no notes to decrypt!")
+        return
 
     decrypt_window = tk.Toplevel(main_window)
     decrypt_window.title("Decryption")
     decrypt_window.geometry("700x700")
     decrypt_window.config(padx=20, pady=20)
 
-    info_label= tk.Label(decrypt_window,text="Choose the note you want to decrypt")
+    info_label = tk.Label(decrypt_window, text="Choose the note you want to decrypt")
     info_label.config(font=("Arial", 24, "bold"))
     info_label.pack()
 
@@ -112,8 +115,8 @@ def open_decryption_window():
             index = selection[0]
             clicked_title = event.widget.get(index)
 
-        selected_hint=file_operations.get_note_from_file(clicked_title)[0]
-        hint_text="Hint : "+'"'+selected_hint+'"'
+        selected_hint = file_operations.get_note_from_file(clicked_title)[0]
+        hint_text = "Hint : " + '"' + selected_hint + '"'
         hint_label.config(text=hint_text)
 
     listbox.bind("<<ListboxSelect>>", callback)
@@ -133,7 +136,8 @@ def open_decryption_window():
     key_entry.pack(side="left")
     key_entry.focus()
 
-    decrypt_button = tk.Button(decrypt_window, text="Decrypt",command=lambda : open_decrypted_note(clicked_title,key_entry.get()))
+    decrypt_button = tk.Button(decrypt_window, text="Decrypt",
+                               command=lambda: open_decrypted_note(clicked_title, key_entry.get()))
     decrypt_button.config(font=("Arial", 24, "bold"))
     decrypt_button.pack()
 
@@ -147,10 +151,9 @@ def open_decryption_window():
             messagebox.showinfo(title="Note deleted", message="Your note has been deleted successfully!")
             decrypt_window.destroy()
 
-    delete_button = tk.Button(decrypt_window, text="Delete",command=lambda : delete_note(clicked_title))
+    delete_button = tk.Button(decrypt_window, text="Delete", command=lambda: delete_note(clicked_title))
     delete_button.config(font=("Arial", 24, "bold"))
     delete_button.pack()
-
 
 
 main_window = tk.Tk()
@@ -192,13 +195,8 @@ encrypt_button.config(font=("Arial", 24, "bold"))
 encrypt_button.pack()
 
 # decryption
-###TO-DO - add functionality to the button -> get the decryption page for the user to choose the note to decrypt #
 decrypt_button = tk.Button(text="Decrypt", command=open_decryption_window)
 decrypt_button.config(font=("Arial", 24, "bold"))
 decrypt_button.pack()
-
-
-
-
 
 main_window.mainloop()
