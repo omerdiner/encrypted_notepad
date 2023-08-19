@@ -1,12 +1,10 @@
 import os
-import encryption
 
 current_directory = os.getcwd()
+wrong_key_log_file = "wrong_key_log.txt"
 
 def save_note_to_file(key_hint, note, title):
-    #create a directory called notes if it doesn't exist
-    if not os.path.exists(current_directory + "/notes"):
-        os.mkdir(current_directory + "/notes")
+    check_notes_dir()
     with open(current_directory + "/notes/" + title + ".txt", "w") as file:
         file.write(key_hint + "\n")
         file.write(note)
@@ -31,20 +29,28 @@ def get_titles():
 def delete_file(title):
     os.remove(current_directory + "/notes/" + title + ".txt")
 
-
 def backup_notes():
-    #create a directory called backup if it doesn't exist
-    if not os.path.exists(current_directory + "/secret_backup"):
-        os.mkdir(current_directory + "/secret_backup")
-
+    check_backup_dir()
     files = os.listdir(current_directory + "/notes")
     for file in files:
         with open(current_directory + "/notes/" + file, "r") as original_file:
             with open(current_directory + "/secret_backup/" + file, "w") as backup_file:
                 backup_file.write(original_file.read())
 
+def save_wrong_key_log(log):
+    check_log_dir()
+    with open(current_directory + "/log/" + wrong_key_log_file, "a") as file:
+        file.write(log + "\n")
 
+def check_log_dir():
+    if not os.path.exists(current_directory + "/log"):
+        os.mkdir(current_directory + "/log")
 
+def check_backup_dir():
+    if not os.path.exists(current_directory + "/secret_backup"):
+        os.mkdir(current_directory + "/secret_backup")
 
-
+def check_notes_dir():
+    if not os.path.exists(current_directory + "/notes"):
+        os.mkdir(current_directory + "/notes")
 
