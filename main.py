@@ -5,8 +5,6 @@ import encryption
 import file_operations
 
 
-##TO-DO  MAKE ENCRIPTION TURKISH ALPHABET FRIENDLY
-
 def check_if_title_exists(title):
     titles = file_operations.get_titles()
     if title in titles:
@@ -14,7 +12,6 @@ def check_if_title_exists(title):
         return True
     else:
         return False
-
 
 def check_entries():
     if len(title_entry.get()) == 0:
@@ -26,7 +23,6 @@ def check_entries():
     else:
         return check_if_title_exists(title_entry.get()) == False
 
-
 def check_key(key):
     if len(key) == 0:
         messagebox.showerror(title="Error", message="Please enter a key!")
@@ -34,21 +30,17 @@ def check_key(key):
     else:
         return True
 
-
 def take_key():
     key = simpledialog.askstring(title="Key", prompt="What's your secret key?:", show='*', initialvalue="*********")
     return key
-
 
 def take_key_hint():
     key_hint = simpledialog.askstring(title="Hint", prompt="Hint:", initialvalue="Be creative!")
     return key_hint
 
-
 def if_note_exists():
     titles = file_operations.get_titles()
     return len(titles) > 0
-
 
 def encrypt_note():
     if not check_entries():
@@ -64,8 +56,13 @@ def encrypt_note():
     file_operations.save_note_to_file(key_hint, encrypted_note, title)
     messagebox.showinfo(title="Note saved", message="Your note has been saved successfully!")
 
+def take_backup():
+    backup_control=file_operations.backup_notes()
+    if backup_control==False:
+        messagebox.showerror(title="Error", message="There are no notes to backup!")
+    else:
+        messagebox.showinfo(title="Backup", message="Backup successful!")
 
-############################################################################
 def open_decrypted_note(title, key):
     show_decrypted_note_window = tk.Toplevel(main_window)
     show_decrypted_note_window.title(title)
@@ -74,7 +71,7 @@ def open_decrypted_note(title, key):
     show_decrypted_note_window.config(bg="dark blue")
 
     note = file_operations.get_note_from_file(title)[1]
-    decrypted_note = encryption.decrypt(note, key)
+    decrypted_note = encryption.decrypt(title,note, key)
 
     decrypted_note_text = tk.Text(show_decrypted_note_window, height=20, width=50)
     decrypted_note_text.config(font=("Arial", 24, "bold"))
@@ -185,7 +182,7 @@ note_label.pack()
 # text entry for the note
 note_entry = tk.Text()
 note_entry.config(font=("Arial", 24, "bold"))
-note_entry.config(height=8, width=40)
+note_entry.config(height=7, width=40)
 note_entry.pack()
 note_entry.focus()
 
@@ -195,8 +192,14 @@ encrypt_button.config(font=("Arial", 24, "bold"))
 encrypt_button.pack()
 
 # decryption
-decrypt_button = tk.Button(text="Decrypt", command=open_decryption_window)
+decrypt_button = tk.Button(text="Open Decryption Page", command=open_decryption_window)
 decrypt_button.config(font=("Arial", 24, "bold"))
 decrypt_button.pack()
+
+#backup button
+backup_button = tk.Button(text="Backup Existing Files", command=take_backup)
+backup_button.config(font=("Arial", 24, "bold"))
+backup_button.pack()
+
 
 main_window.mainloop()
