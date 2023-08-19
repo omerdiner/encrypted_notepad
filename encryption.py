@@ -1,35 +1,35 @@
-def encrypt(text,key):
-    encrypted_text = ""
-    key_index = 0
+import base64
+from datetime import datetime
+from cryptography.fernet import Fernet
+import file_operations
 
-    for char in text:
-        if char.isalpha():
-            shift = ord(key[key_index % len(key)].lower()) - ord('a')
-            if char.isupper():
-                encrypted_char = chr((ord(char) - ord('A') + shift) % 26 + ord('A'))
-            else:
-                encrypted_char = chr((ord(char) - ord('a') + shift) % 26 + ord('a'))
-            key_index += 1
-        else:
-            encrypted_char = char
-        encrypted_text += encrypted_char
+def encrypt(text, key):
+    key=pad_string_to_32_bytes(key)
+    key = base64.urlsafe_b64encode(key.encode("utf-8"))
+    fernet = Fernet(key)
+    encrypted_text = fernet.encrypt(text.encode())
+    #save_note function works with ascii, so we need to get rid of the binary version
+    return encrypted_text.decode("ascii")
 
-    return encrypted_text
+def decrypt(title,text, key):
+    try:
+        key=pad_string_to_32_bytes(key)
+        key = base64.urlsafe_b64encode(key.encode("utf-8"))
+        fernet = Fernet(key)
+        decrypted_text = fernet.decrypt(text).decode()
+        return decrypted_text
+    except:
+        # create a log text. including the date and time. and the title of the note
+        log= f"Attemp to access {title} with wrong key at {datetime.now()}."
+        file_operations.save_wrong_key_log(log)
+        return ""
 
-def decrypt(text,key):
-    decrypted_text = ""
-    key_index = 0
-
-    for char in text:
-        if char.isalpha():
-            shift = ord(key[key_index % len(key)].lower()) - ord('a')
-            if char.isupper():
-                decrypted_char = chr((ord(char) - ord('A') - shift) % 26 + ord('A'))
-            else:
-                decrypted_char = chr((ord(char) - ord('a') - shift) % 26 + ord('a'))
-            key_index += 1
-        else:
-            decrypted_char = char
-        decrypted_text += decrypted_char
-
-    return decrypted_text
+def pad_string_to_32_bytes(input_string):
+    missing_bytes = 32 - len(input_string)
+    if missing_bytes > 0:
+        padded_string = input_string + "\0" * missing_bytes
+        return padded_string
+    elif len(input_string) == 32:
+        return input_string
+    else:
+        return input_string[:32]
