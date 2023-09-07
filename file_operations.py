@@ -1,6 +1,6 @@
 import os
-
-current_directory = os.getcwd()
+current_directory="C:/Users/OMER/PycharmProjects/encrypted_notepad"
+#current_directory = os.getcwd()
 wrong_key_log_file = "wrong_key_log.txt"
 
 
